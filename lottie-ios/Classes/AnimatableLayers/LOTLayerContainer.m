@@ -206,12 +206,15 @@
 }
 
 - (void)display {
-  LOTLayerContainer *presentation = self;
-  if (self.animationKeys.count &&
-      self.presentationLayer) {
-    presentation = (LOTLayerContainer *)self.presentationLayer;
+  // Sometimes this method is called from a WebThread, but crashes if run on anything but the main thread.
+  if ([NSThread isMainThread]) {
+    LOTLayerContainer *presentation = self;
+    if (self.animationKeys.count &&
+        self.presentationLayer) {
+      presentation = (LOTLayerContainer *)self.presentationLayer;
+    }
+    [self displayWithFrame:presentation.currentFrame];
   }
-  [self displayWithFrame:presentation.currentFrame];
 }
 
 - (void)displayWithFrame:(NSNumber *)frame {
